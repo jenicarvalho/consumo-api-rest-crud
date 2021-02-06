@@ -5,11 +5,9 @@ import axios from 'axios'
 function App() {
 
   const [usuarios, setUsuarios] = useState<any>([])
+  const [usuarioUpdate, setUsuarioUpdate] = useState<any>()
 
   const inputNome = useRef<HTMLInputElement>(null)
-  const inputIdade = useRef<HTMLInputElement>(null)
-  const inputEmpresa = useRef<HTMLInputElement>(null)
-  const inputTelefone = useRef<HTMLInputElement>(null)
 
   const mostraUsuarios = () => {
     axios.get("http://localhost:4000/usuarios")
@@ -19,13 +17,9 @@ function App() {
   const enviarCadastro = () => {
 
     const requisicao = {
-      name: inputNome.current?.value,
-      age: inputIdade.current?.value,
-      company: inputEmpresa.current?.value,
-      phone: inputTelefone.current?.value
+      name: inputNome.current?.value
     }
-
-    axios.post("http://localhost:4000/usuarios", requisicao)
+    axios.patch(`http://localhost:4000/usuarios/${usuarioUpdate}`, requisicao)
     mostraUsuarios()
   }
 
@@ -33,18 +27,11 @@ function App() {
     mostraUsuarios()
   }, [])
 
-  const deletarUsuario = (id: any) => {
-    axios.patch(`http://localhost:4000/usuarios/${id}`)
-    mostraUsuarios()
-  }
-
   return (
     <div className="App">
-      <input type="password" placeholder="Nome" ref={inputNome} />
-      <input type="text" placeholder="Idade" ref={inputIdade} />
-      <input type="text" placeholder="Empresa" ref={inputEmpresa} />
-      <input type="text" placeholder="Telefone" ref={inputTelefone} />
-      <button onClick={enviarCadastro}>Cadastrar</button>
+      <p>id selecionado: {usuarioUpdate}</p>
+      <input type="text" placeholder="Nome" ref={inputNome} />
+      <button onClick={enviarCadastro}>Atualizar</button>
 
       <br/>
 
@@ -52,7 +39,7 @@ function App() {
         
         { usuarios !== null && 
           usuarios.map((item: any) => (
-            <li key={item.id}>{item.name}  <button onClick={() => deletarUsuario(item.id)}>X</button></li>
+            <li key={item.id}>{item.name} - {item.id}  <button onClick={() => setUsuarioUpdate(item.id)}>selecionar</button></li>
           ))
         }
       </ul>
